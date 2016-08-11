@@ -1,0 +1,277 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- AUTH: zhangpengfei@vko.cn -->
+<mapper namespace="com.weiwork.catering.mapper.IGoodsMapper">
+
+<!-- 所有字段 -->
+	<sql id="Base_Column_List">
+	id  
+	,storeId 
+	,name 
+	,price 
+	,sellPrice 
+	,image 
+	,startLevel 
+	,isDelete 
+	,goodsTypeId 
+	,goodsTypeName 
+	</sql>
+	
+<!-- 字段映射 -->
+	<resultMap id="BaseResultMap" type="com.weiwork.catering.model.Goods">
+	     <id column="id" property="id" jdbcType="BIGINT" />
+		<result column="storeId" jdbcType="BIGINT" property="storeId" />
+		<result column="name" jdbcType="VARCHAR" property="name" />
+		<result column="price" jdbcType="VARCHAR" property="price" />
+		<result column="sellPrice" jdbcType="VARCHAR" property="sellPrice" />
+		<result column="image" jdbcType="VARCHAR" property="image" />
+		<result column="startLevel" jdbcType="INTEGER" property="startLevel" />
+		<result column="isDelete" jdbcType="INTEGER" property="isDelete" />
+		<result column="goodsTypeId" jdbcType="INTEGER" property="goodsTypeId" />
+		<result column="goodsTypeName" jdbcType="VARCHAR" property="goodsTypeName" />
+	</resultMap>
+
+<!-- 主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+		select  <include refid="Base_Column_List" />
+		from goods
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+
+
+<!-- 删除 -->	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from goods where id = #{id,jdbcType=BIGINT}
+    </delete>
+	
+<!-- 批量删除  慎用
+	<delete id="deleteByPrimaryKeyBatch" parameterType="array" >
+     delete from goods where id in 
+		 <foreach collection="array" index="index" item="item" open="(" separator="," close=")">  
+				#{item}   
+		</foreach> 
+    </delete>
+-->		
+<!-- 通用查询条件 只能用来查询，不要用于删改 -->
+	<sql id="sql_of_where">
+		WHERE 1=1 
+		<if test="bParam != null" >
+			<if test="bParam.id != null"> AND id = #{bParam.id,jdbcType=BIGINT} </if>
+			<if test="bParam.storeId != null"> AND storeId = #{bParam.storeId,jdbcType=BIGINT} </if>
+			<if test="bParam.name != null"> AND name = #{bParam.name,jdbcType=VARCHAR} </if>
+			<if test="bParam.price != null"> AND price = #{bParam.price,jdbcType=VARCHAR} </if>
+			<if test="bParam.sellPrice != null"> AND sellPrice = #{bParam.sellPrice,jdbcType=VARCHAR} </if>
+			<if test="bParam.image != null"> AND image = #{bParam.image,jdbcType=VARCHAR} </if>
+			<if test="bParam.startLevel != null"> AND startLevel = #{bParam.startLevel,jdbcType=INTEGER} </if>
+			<if test="bParam.isDelete != null"> AND isDelete = #{bParam.isDelete,jdbcType=INTEGER} </if>
+			<if test="bParam.goodsTypeId != null"> AND goodsTypeId = #{bParam.goodsTypeId,jdbcType=INTEGER} </if>
+			<if test="bParam.goodsTypeName != null"> AND goodsTypeName = #{bParam.goodsTypeName,jdbcType=VARCHAR} </if>
+		</if>
+	</sql>
+	
+<!-- 通用分页查询 -->
+	<select id="queryByParamMap" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from goods
+		<include refid="sql_of_where" />
+		<if test="pParam != null">
+			<if test="pParam.orderByClause != null" > order by ${pParam.orderByClause} </if>
+			<if test="pParam.startIndex != null and pParam.pageSize != null" >
+			  limit #{pParam.startIndex} , #{pParam.pageSize}
+			</if>
+		</if>
+	</select>
+	
+<!-- 通用分页查询记录总数 -->
+	<select id="countByParamMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(id) from goods
+		<include refid="sql_of_where" />
+	</select>
+	
+<!-- 插入 -->
+	<insert id="insert" parameterType="com.weiwork.catering.model.Goods">
+		insert into goods 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				id, 
+			<if test="storeId != null">
+			    storeId,
+			</if>
+			<if test="name != null">
+			    name,
+			</if>
+			<if test="price != null">
+			    price,
+			</if>
+			<if test="sellPrice != null">
+			    sellPrice,
+			</if>
+			<if test="image != null">
+			    image,
+			</if>
+			<if test="startLevel != null">
+			    startLevel,
+			</if>
+			<if test="isDelete != null">
+			    isDelete,
+			</if>
+			<if test="goodsTypeId != null">
+			    goodsTypeId,
+			</if>
+			<if test="goodsTypeName != null">
+			    goodsTypeName,
+			</if> 
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			     #{id,jdbcType=BIGINT}, 
+			<if test="storeId != null">
+			    #{storeId,jdbcType=BIGINT},
+			</if>
+			<if test="name != null">
+			    #{name,jdbcType=VARCHAR},
+			</if>
+			<if test="price != null">
+			    #{price,jdbcType=VARCHAR},
+			</if>
+			<if test="sellPrice != null">
+			    #{sellPrice,jdbcType=VARCHAR},
+			</if>
+			<if test="image != null">
+			    #{image,jdbcType=VARCHAR},
+			</if>
+			<if test="startLevel != null">
+			    #{startLevel,jdbcType=INTEGER},
+			</if>
+			<if test="isDelete != null">
+			    #{isDelete,jdbcType=INTEGER},
+			</if>
+			<if test="goodsTypeId != null">
+			    #{goodsTypeId,jdbcType=INTEGER},
+			</if>
+			<if test="goodsTypeName != null">
+			    #{goodsTypeName,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+<!-- 批量插入 请根据业务修改默认值-->	
+    <insert id="insertBatch"  parameterType="java.util.List">
+		insert into goods 
+		( <include refid="Base_Column_List" /> ) 
+		values
+		<foreach collection="list" item="item" separator=",">
+		(#{item.id,jdbcType=BIGINT}  
+			<choose>  
+				<when test="item.storeId != null">,#{item.storeId ,jdbcType=BIGINT}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.name != null">,#{item.name ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.price != null">,#{item.price ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.sellPrice != null">,#{item.sellPrice ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.image != null">,#{item.image ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.startLevel != null">,#{item.startLevel ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.isDelete != null">,#{item.isDelete ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.goodsTypeId != null">,#{item.goodsTypeId ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.goodsTypeName != null">,#{item.goodsTypeName ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose> 
+		)
+		</foreach>
+	</insert>
+
+<!-- 更新 -->
+	<update id="updateByPrimaryKey" parameterType="com.weiwork.catering.model.Goods">
+		update goods
+		<set>
+			<if test="storeId != null" >
+             storeId = #{storeId,jdbcType=BIGINT},
+            </if>
+			<if test="name != null" >
+             name = #{name,jdbcType=VARCHAR},
+            </if>
+			<if test="price != null" >
+             price = #{price,jdbcType=VARCHAR},
+            </if>
+			<if test="sellPrice != null" >
+             sellPrice = #{sellPrice,jdbcType=VARCHAR},
+            </if>
+			<if test="image != null" >
+             image = #{image,jdbcType=VARCHAR},
+            </if>
+			<if test="startLevel != null" >
+             startLevel = #{startLevel,jdbcType=INTEGER},
+            </if>
+			<if test="isDelete != null" >
+             isDelete = #{isDelete,jdbcType=INTEGER},
+            </if>
+			<if test="goodsTypeId != null" >
+             goodsTypeId = #{goodsTypeId,jdbcType=INTEGER},
+            </if>
+			<if test="goodsTypeName != null" >
+             goodsTypeName = #{goodsTypeName,jdbcType=VARCHAR},
+            </if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+<!-- 批量更新 -->
+	<update id="updateBatchByPrimaryKey"  parameterType="java.util.List">
+	     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update goods 
+                <set>
+                  <if test="item.storeId != null" >
+                    storeId = #{item.storeId,jdbcType=BIGINT},
+                  </if>
+                  <if test="item.name != null" >
+                    name = #{item.name,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.price != null" >
+                    price = #{item.price,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.sellPrice != null" >
+                    sellPrice = #{item.sellPrice,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.image != null" >
+                    image = #{item.image,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.startLevel != null" >
+                    startLevel = #{item.startLevel,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.isDelete != null" >
+                    isDelete = #{item.isDelete,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.goodsTypeId != null" >
+                    goodsTypeId = #{item.goodsTypeId,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.goodsTypeName != null" >
+                    goodsTypeName = #{item.goodsTypeName,jdbcType=VARCHAR},
+                  </if>
+                </set>
+                where id = #{item.id,jdbcType=BIGINT}
+         </foreach>
+	</update>
+</mapper>

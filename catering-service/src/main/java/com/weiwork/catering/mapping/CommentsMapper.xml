@@ -1,0 +1,201 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- AUTH: zhangpengfei@vko.cn -->
+<mapper namespace="com.weiwork.catering.mapper.ICommentsMapper">
+
+<!-- 所有字段 -->
+	<sql id="Base_Column_List">
+	id  
+	,objId 
+	,objType 
+	,info 
+	,startLevel 
+	,createTime 
+	</sql>
+	
+<!-- 字段映射 -->
+	<resultMap id="BaseResultMap" type="com.weiwork.catering.model.Comments">
+	     <id column="id" property="id" jdbcType="BIGINT" />
+		<result column="objId" jdbcType="BIGINT" property="objId" />
+		<result column="objType" jdbcType="INTEGER" property="objType" />
+		<result column="info" jdbcType="VARCHAR" property="info" />
+		<result column="startLevel" jdbcType="INTEGER" property="startLevel" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+
+<!-- 主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+		select  <include refid="Base_Column_List" />
+		from comments
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+
+
+<!-- 删除 -->	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from comments where id = #{id,jdbcType=BIGINT}
+    </delete>
+	
+<!-- 批量删除  慎用
+	<delete id="deleteByPrimaryKeyBatch" parameterType="array" >
+     delete from comments where id in 
+		 <foreach collection="array" index="index" item="item" open="(" separator="," close=")">  
+				#{item}   
+		</foreach> 
+    </delete>
+-->		
+<!-- 通用查询条件 只能用来查询，不要用于删改 -->
+	<sql id="sql_of_where">
+		WHERE 1=1 
+		<if test="bParam != null" >
+			<if test="bParam.id != null"> AND id = #{bParam.id,jdbcType=BIGINT} </if>
+			<if test="bParam.objId != null"> AND objId = #{bParam.objId,jdbcType=BIGINT} </if>
+			<if test="bParam.objType != null"> AND objType = #{bParam.objType,jdbcType=INTEGER} </if>
+			<if test="bParam.info != null"> AND info = #{bParam.info,jdbcType=VARCHAR} </if>
+			<if test="bParam.startLevel != null"> AND startLevel = #{bParam.startLevel,jdbcType=INTEGER} </if>
+			<if test="bParam.createTime != null"> AND createTime = #{bParam.createTime,jdbcType=TIMESTAMP} </if>
+		</if>
+	</sql>
+	
+<!-- 通用分页查询 -->
+	<select id="queryByParamMap" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from comments
+		<include refid="sql_of_where" />
+		<if test="pParam != null">
+			<if test="pParam.orderByClause != null" > order by ${pParam.orderByClause} </if>
+			<if test="pParam.startIndex != null and pParam.pageSize != null" >
+			  limit #{pParam.startIndex} , #{pParam.pageSize}
+			</if>
+		</if>
+	</select>
+	
+<!-- 通用分页查询记录总数 -->
+	<select id="countByParamMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(id) from comments
+		<include refid="sql_of_where" />
+	</select>
+	
+<!-- 插入 -->
+	<insert id="insert" parameterType="com.weiwork.catering.model.Comments">
+		insert into comments 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				id, 
+			<if test="objId != null">
+			    objId,
+			</if>
+			<if test="objType != null">
+			    objType,
+			</if>
+			<if test="info != null">
+			    info,
+			</if>
+			<if test="startLevel != null">
+			    startLevel,
+			</if>
+			<if test="createTime != null">
+			    createTime,
+			</if> 
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			     #{id,jdbcType=BIGINT}, 
+			<if test="objId != null">
+			    #{objId,jdbcType=BIGINT},
+			</if>
+			<if test="objType != null">
+			    #{objType,jdbcType=INTEGER},
+			</if>
+			<if test="info != null">
+			    #{info,jdbcType=VARCHAR},
+			</if>
+			<if test="startLevel != null">
+			    #{startLevel,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+			    #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	
+<!-- 批量插入 请根据业务修改默认值-->	
+    <insert id="insertBatch"  parameterType="java.util.List">
+		insert into comments 
+		( <include refid="Base_Column_List" /> ) 
+		values
+		<foreach collection="list" item="item" separator=",">
+		(#{item.id,jdbcType=BIGINT}  
+			<choose>  
+				<when test="item.objId != null">,#{item.objId ,jdbcType=BIGINT}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.objType != null">,#{item.objType ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.info != null">,#{item.info ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.startLevel != null">,#{item.startLevel ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.createTime != null">,#{item.createTime ,jdbcType=TIMESTAMP}</when>
+				<otherwise>,0</otherwise>
+			</choose> 
+		)
+		</foreach>
+	</insert>
+
+<!-- 更新 -->
+	<update id="updateByPrimaryKey" parameterType="com.weiwork.catering.model.Comments">
+		update comments
+		<set>
+			<if test="objId != null" >
+             objId = #{objId,jdbcType=BIGINT},
+            </if>
+			<if test="objType != null" >
+             objType = #{objType,jdbcType=INTEGER},
+            </if>
+			<if test="info != null" >
+             info = #{info,jdbcType=VARCHAR},
+            </if>
+			<if test="startLevel != null" >
+             startLevel = #{startLevel,jdbcType=INTEGER},
+            </if>
+			<if test="createTime != null" >
+             createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+<!-- 批量更新 -->
+	<update id="updateBatchByPrimaryKey"  parameterType="java.util.List">
+	     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update comments 
+                <set>
+                  <if test="item.objId != null" >
+                    objId = #{item.objId,jdbcType=BIGINT},
+                  </if>
+                  <if test="item.objType != null" >
+                    objType = #{item.objType,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.info != null" >
+                    info = #{item.info,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.startLevel != null" >
+                    startLevel = #{item.startLevel,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.createTime != null" >
+                    createTime = #{item.createTime,jdbcType=TIMESTAMP},
+                  </if>
+                </set>
+                where id = #{item.id,jdbcType=BIGINT}
+         </foreach>
+	</update>
+</mapper>

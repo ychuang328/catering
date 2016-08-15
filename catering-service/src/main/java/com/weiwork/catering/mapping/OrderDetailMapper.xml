@@ -1,0 +1,239 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- AUTH: zhangpengfei@vko.cn -->
+<mapper namespace="com.weiwork.catering.mapper.IOrderDetailMapper">
+
+<!-- 所有字段 -->
+	<sql id="Base_Column_List">
+	id  
+	,orderId 
+	,goodsId 
+	,userId 
+	,goodsName 
+	,goodsPrice 
+	,num 
+	,createTime 
+	</sql>
+	
+<!-- 字段映射 -->
+	<resultMap id="BaseResultMap" type="com.weiwork.catering.model.OrderDetail">
+	     <id column="id" property="id" jdbcType="BIGINT" />
+		<result column="orderId" jdbcType="BIGINT" property="orderId" />
+		<result column="goodsId" jdbcType="BIGINT" property="goodsId" />
+		<result column="userId" jdbcType="BIGINT" property="userId" />
+		<result column="goodsName" jdbcType="VARCHAR" property="goodsName" />
+		<result column="goodsPrice" jdbcType="VARCHAR" property="goodsPrice" />
+		<result column="num" jdbcType="INTEGER" property="num" />
+		<result column="createTime" jdbcType="TIMESTAMP" property="createTime" />
+	</resultMap>
+
+<!-- 主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+		select  <include refid="Base_Column_List" />
+		from orderDetail
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+
+
+<!-- 删除 -->	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from orderDetail where id = #{id,jdbcType=BIGINT}
+    </delete>
+	
+<!-- 批量删除  慎用
+	<delete id="deleteByPrimaryKeyBatch" parameterType="array" >
+     delete from orderDetail where id in 
+		 <foreach collection="array" index="index" item="item" open="(" separator="," close=")">  
+				#{item}   
+		</foreach> 
+    </delete>
+-->		
+<!-- 通用查询条件 只能用来查询，不要用于删改 -->
+	<sql id="sql_of_where">
+		WHERE 1=1 
+		<if test="bParam != null" >
+			<if test="bParam.id != null"> AND id = #{bParam.id,jdbcType=BIGINT} </if>
+			<if test="bParam.orderId != null"> AND orderId = #{bParam.orderId,jdbcType=BIGINT} </if>
+			<if test="bParam.goodsId != null"> AND goodsId = #{bParam.goodsId,jdbcType=BIGINT} </if>
+			<if test="bParam.userId != null"> AND userId = #{bParam.userId,jdbcType=BIGINT} </if>
+			<if test="bParam.goodsName != null"> AND goodsName = #{bParam.goodsName,jdbcType=VARCHAR} </if>
+			<if test="bParam.goodsPrice != null"> AND goodsPrice = #{bParam.goodsPrice,jdbcType=VARCHAR} </if>
+			<if test="bParam.num != null"> AND num = #{bParam.num,jdbcType=INTEGER} </if>
+			<if test="bParam.createTime != null"> AND createTime = #{bParam.createTime,jdbcType=TIMESTAMP} </if>
+		</if>
+	</sql>
+	
+<!-- 通用分页查询 -->
+	<select id="queryByParamMap" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from orderDetail
+		<include refid="sql_of_where" />
+		<if test="pParam != null">
+			<if test="pParam.orderByClause != null" > order by ${pParam.orderByClause} </if>
+			<if test="pParam.startIndex != null and pParam.pageSize != null" >
+			  limit #{pParam.startIndex} , #{pParam.pageSize}
+			</if>
+		</if>
+	</select>
+	
+<!-- 通用分页查询记录总数 -->
+	<select id="countByParamMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(id) from orderDetail
+		<include refid="sql_of_where" />
+	</select>
+	
+<!-- 插入 -->
+	<insert id="insert" parameterType="com.weiwork.catering.model.OrderDetail">
+		insert into orderDetail 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				id, 
+			<if test="orderId != null">
+			    orderId,
+			</if>
+			<if test="goodsId != null">
+			    goodsId,
+			</if>
+			<if test="userId != null">
+			    userId,
+			</if>
+			<if test="goodsName != null">
+			    goodsName,
+			</if>
+			<if test="goodsPrice != null">
+			    goodsPrice,
+			</if>
+			<if test="num != null">
+			    num,
+			</if>
+			<if test="createTime != null">
+			    createTime,
+			</if> 
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			     #{id,jdbcType=BIGINT}, 
+			<if test="orderId != null">
+			    #{orderId,jdbcType=BIGINT},
+			</if>
+			<if test="goodsId != null">
+			    #{goodsId,jdbcType=BIGINT},
+			</if>
+			<if test="userId != null">
+			    #{userId,jdbcType=BIGINT},
+			</if>
+			<if test="goodsName != null">
+			    #{goodsName,jdbcType=VARCHAR},
+			</if>
+			<if test="goodsPrice != null">
+			    #{goodsPrice,jdbcType=VARCHAR},
+			</if>
+			<if test="num != null">
+			    #{num,jdbcType=INTEGER},
+			</if>
+			<if test="createTime != null">
+			    #{createTime,jdbcType=TIMESTAMP},
+			</if>
+		</trim>
+	</insert>
+	
+<!-- 批量插入 请根据业务修改默认值-->	
+    <insert id="insertBatch"  parameterType="java.util.List">
+		insert into orderDetail 
+		( <include refid="Base_Column_List" /> ) 
+		values
+		<foreach collection="list" item="item" separator=",">
+		(#{item.id,jdbcType=BIGINT}  
+			<choose>  
+				<when test="item.orderId != null">,#{item.orderId ,jdbcType=BIGINT}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.goodsId != null">,#{item.goodsId ,jdbcType=BIGINT}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.userId != null">,#{item.userId ,jdbcType=BIGINT}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.goodsName != null">,#{item.goodsName ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.goodsPrice != null">,#{item.goodsPrice ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.num != null">,#{item.num ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.createTime != null">,#{item.createTime ,jdbcType=TIMESTAMP}</when>
+				<otherwise>,0</otherwise>
+			</choose> 
+		)
+		</foreach>
+	</insert>
+
+<!-- 更新 -->
+	<update id="updateByPrimaryKey" parameterType="com.weiwork.catering.model.OrderDetail">
+		update orderDetail
+		<set>
+			<if test="orderId != null" >
+             orderId = #{orderId,jdbcType=BIGINT},
+            </if>
+			<if test="goodsId != null" >
+             goodsId = #{goodsId,jdbcType=BIGINT},
+            </if>
+			<if test="userId != null" >
+             userId = #{userId,jdbcType=BIGINT},
+            </if>
+			<if test="goodsName != null" >
+             goodsName = #{goodsName,jdbcType=VARCHAR},
+            </if>
+			<if test="goodsPrice != null" >
+             goodsPrice = #{goodsPrice,jdbcType=VARCHAR},
+            </if>
+			<if test="num != null" >
+             num = #{num,jdbcType=INTEGER},
+            </if>
+			<if test="createTime != null" >
+             createTime = #{createTime,jdbcType=TIMESTAMP},
+            </if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+<!-- 批量更新 -->
+	<update id="updateBatchByPrimaryKey"  parameterType="java.util.List">
+	     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update orderDetail 
+                <set>
+                  <if test="item.orderId != null" >
+                    orderId = #{item.orderId,jdbcType=BIGINT},
+                  </if>
+                  <if test="item.goodsId != null" >
+                    goodsId = #{item.goodsId,jdbcType=BIGINT},
+                  </if>
+                  <if test="item.userId != null" >
+                    userId = #{item.userId,jdbcType=BIGINT},
+                  </if>
+                  <if test="item.goodsName != null" >
+                    goodsName = #{item.goodsName,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.goodsPrice != null" >
+                    goodsPrice = #{item.goodsPrice,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.num != null" >
+                    num = #{item.num,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.createTime != null" >
+                    createTime = #{item.createTime,jdbcType=TIMESTAMP},
+                  </if>
+                </set>
+                where id = #{item.id,jdbcType=BIGINT}
+         </foreach>
+	</update>
+</mapper>

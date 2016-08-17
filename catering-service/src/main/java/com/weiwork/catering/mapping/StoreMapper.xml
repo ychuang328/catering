@@ -1,0 +1,334 @@
+﻿<?xml version="1.0" encoding="UTF-8" ?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN" "http://mybatis.org/dtd/mybatis-3-mapper.dtd" >
+<!-- AUTH: zhangpengfei@vko.cn -->
+<mapper namespace="com.weiwork.catering.mapper.IStoreMapper">
+
+<!-- 所有字段 -->
+	<sql id="Base_Column_List">
+	id  
+	,adminUserId 
+	,storeName 
+	,storeTypeId 
+	,stroreCover 
+	,storeInfo 
+	,startTime 
+	,endTine 
+	,deliveryAmount 
+	,phone 
+	,startLevel 
+	,ranges 
+	,distributionArea 
+	</sql>
+	
+<!-- 字段映射 -->
+	<resultMap id="BaseResultMap" type="com.weiwork.catering.model.Store">
+	     <id column="id" property="id" jdbcType="BIGINT" />
+		<result column="adminUserId" jdbcType="BIGINT" property="adminUserId" />
+		<result column="storeName" jdbcType="VARCHAR" property="storeName" />
+		<result column="storeTypeId" jdbcType="INTEGER" property="storeTypeId" />
+		<result column="stroreCover" jdbcType="VARCHAR" property="stroreCover" />
+		<result column="storeInfo" jdbcType="VARCHAR" property="storeInfo" />
+		<result column="startTime" jdbcType="TIMESTAMP" property="startTime" />
+		<result column="endTine" jdbcType="TIMESTAMP" property="endTine" />
+		<result column="deliveryAmount" jdbcType="VARCHAR" property="deliveryAmount" />
+		<result column="phone" jdbcType="VARCHAR" property="phone" />
+		<result column="startLevel" jdbcType="INTEGER" property="startLevel" />
+		<result column="ranges" jdbcType="VARCHAR" property="ranges" />
+		<result column="distributionArea" jdbcType="VARCHAR" property="distributionArea" />
+	</resultMap>
+
+<!-- 主键查询 -->
+	<select id="selectByPrimaryKey" resultMap="BaseResultMap" parameterType="java.lang.Long" >
+		select  <include refid="Base_Column_List" />
+		from store
+		where id = #{id,jdbcType=BIGINT}
+	</select>
+
+
+
+<!-- 删除 -->	
+	<delete id="deleteByPrimaryKey" parameterType="java.lang.Long" >
+    delete from store where id = #{id,jdbcType=BIGINT}
+    </delete>
+	
+<!-- 批量删除  慎用
+	<delete id="deleteByPrimaryKeyBatch" parameterType="array" >
+     delete from store where id in 
+		 <foreach collection="array" index="index" item="item" open="(" separator="," close=")">  
+				#{item}   
+		</foreach> 
+    </delete>
+-->		
+<!-- 通用查询条件 只能用来查询，不要用于删改 -->
+	<sql id="sql_of_where">
+		WHERE 1=1 
+		<if test="bParam != null" >
+			<if test="bParam.id != null"> AND id = #{bParam.id,jdbcType=BIGINT} </if>
+			<if test="bParam.adminUserId != null"> AND adminUserId = #{bParam.adminUserId,jdbcType=BIGINT} </if>
+			<if test="bParam.storeName != null"> AND storeName = #{bParam.storeName,jdbcType=VARCHAR} </if>
+			<if test="bParam.storeTypeId != null"> AND storeTypeId = #{bParam.storeTypeId,jdbcType=INTEGER} </if>
+			<if test="bParam.stroreCover != null"> AND stroreCover = #{bParam.stroreCover,jdbcType=VARCHAR} </if>
+			<if test="bParam.storeInfo != null"> AND storeInfo = #{bParam.storeInfo,jdbcType=VARCHAR} </if>
+			<if test="bParam.startTime != null"> AND startTime = #{bParam.startTime,jdbcType=TIMESTAMP} </if>
+			<if test="bParam.endTine != null"> AND endTine = #{bParam.endTine,jdbcType=TIMESTAMP} </if>
+			<if test="bParam.deliveryAmount != null"> AND deliveryAmount = #{bParam.deliveryAmount,jdbcType=VARCHAR} </if>
+			<if test="bParam.phone != null"> AND phone = #{bParam.phone,jdbcType=VARCHAR} </if>
+			<if test="bParam.startLevel != null"> AND startLevel = #{bParam.startLevel,jdbcType=INTEGER} </if>
+			<if test="bParam.ranges != null"> AND ranges = #{bParam.ranges,jdbcType=VARCHAR} </if>
+			<if test="bParam.distributionArea != null"> AND distributionArea = #{bParam.distributionArea,jdbcType=VARCHAR} </if>
+		</if>
+	</sql>
+	
+<!-- 通用分页查询 -->
+	<select id="queryByParamMap" parameterType="java.util.Map"
+		resultMap="BaseResultMap">
+		select 
+		<include refid="Base_Column_List" />
+		from store
+		<include refid="sql_of_where" />
+		<if test="pParam != null">
+			<if test="pParam.orderByClause != null" > order by ${pParam.orderByClause} </if>
+			<if test="pParam.startIndex != null and pParam.pageSize != null" >
+			  limit #{pParam.startIndex} , #{pParam.pageSize}
+			</if>
+		</if>
+	</select>
+	
+<!-- 通用分页查询记录总数 -->
+	<select id="countByParamMap" parameterType="java.util.Map" resultType="java.lang.Integer">
+		select count(id) from store
+		<include refid="sql_of_where" />
+	</select>
+	
+<!-- 插入 -->
+	<insert id="insert" parameterType="com.weiwork.catering.model.Store">
+		insert into store 
+		<trim prefix="(" suffix=")" suffixOverrides=",">
+				id, 
+			<if test="adminUserId != null">
+			    adminUserId,
+			</if>
+			<if test="storeName != null">
+			    storeName,
+			</if>
+			<if test="storeTypeId != null">
+			    storeTypeId,
+			</if>
+			<if test="stroreCover != null">
+			    stroreCover,
+			</if>
+			<if test="storeInfo != null">
+			    storeInfo,
+			</if>
+			<if test="startTime != null">
+			    startTime,
+			</if>
+			<if test="endTine != null">
+			    endTine,
+			</if>
+			<if test="deliveryAmount != null">
+			    deliveryAmount,
+			</if>
+			<if test="phone != null">
+			    phone,
+			</if>
+			<if test="startLevel != null">
+			    startLevel,
+			</if>
+			<if test="ranges != null">
+			    ranges,
+			</if>
+			<if test="distributionArea != null">
+			    distributionArea,
+			</if> 
+		</trim>
+		<trim prefix="values (" suffix=")" suffixOverrides=",">
+			     #{id,jdbcType=BIGINT}, 
+			<if test="adminUserId != null">
+			    #{adminUserId,jdbcType=BIGINT},
+			</if>
+			<if test="storeName != null">
+			    #{storeName,jdbcType=VARCHAR},
+			</if>
+			<if test="storeTypeId != null">
+			    #{storeTypeId,jdbcType=INTEGER},
+			</if>
+			<if test="stroreCover != null">
+			    #{stroreCover,jdbcType=VARCHAR},
+			</if>
+			<if test="storeInfo != null">
+			    #{storeInfo,jdbcType=VARCHAR},
+			</if>
+			<if test="startTime != null">
+			    #{startTime,jdbcType=TIMESTAMP},
+			</if>
+			<if test="endTine != null">
+			    #{endTine,jdbcType=TIMESTAMP},
+			</if>
+			<if test="deliveryAmount != null">
+			    #{deliveryAmount,jdbcType=VARCHAR},
+			</if>
+			<if test="phone != null">
+			    #{phone,jdbcType=VARCHAR},
+			</if>
+			<if test="startLevel != null">
+			    #{startLevel,jdbcType=INTEGER},
+			</if>
+			<if test="ranges != null">
+			    #{ranges,jdbcType=VARCHAR},
+			</if>
+			<if test="distributionArea != null">
+			    #{distributionArea,jdbcType=VARCHAR},
+			</if>
+		</trim>
+	</insert>
+	
+<!-- 批量插入 请根据业务修改默认值-->	
+    <insert id="insertBatch"  parameterType="java.util.List">
+		insert into store 
+		( <include refid="Base_Column_List" /> ) 
+		values
+		<foreach collection="list" item="item" separator=",">
+		(#{item.id,jdbcType=BIGINT}  
+			<choose>  
+				<when test="item.adminUserId != null">,#{item.adminUserId ,jdbcType=BIGINT}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.storeName != null">,#{item.storeName ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.storeTypeId != null">,#{item.storeTypeId ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.stroreCover != null">,#{item.stroreCover ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.storeInfo != null">,#{item.storeInfo ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.startTime != null">,#{item.startTime ,jdbcType=TIMESTAMP}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.endTine != null">,#{item.endTine ,jdbcType=TIMESTAMP}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.deliveryAmount != null">,#{item.deliveryAmount ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.phone != null">,#{item.phone ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.startLevel != null">,#{item.startLevel ,jdbcType=INTEGER}</when>
+				<otherwise>,0</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.ranges != null">,#{item.ranges ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose>
+			<choose>  
+				<when test="item.distributionArea != null">,#{item.distributionArea ,jdbcType=VARCHAR}</when>
+				<otherwise>,''</otherwise>
+			</choose> 
+		)
+		</foreach>
+	</insert>
+
+<!-- 更新 -->
+	<update id="updateByPrimaryKey" parameterType="com.weiwork.catering.model.Store">
+		update store
+		<set>
+			<if test="adminUserId != null" >
+             adminUserId = #{adminUserId,jdbcType=BIGINT},
+            </if>
+			<if test="storeName != null" >
+             storeName = #{storeName,jdbcType=VARCHAR},
+            </if>
+			<if test="storeTypeId != null" >
+             storeTypeId = #{storeTypeId,jdbcType=INTEGER},
+            </if>
+			<if test="stroreCover != null" >
+             stroreCover = #{stroreCover,jdbcType=VARCHAR},
+            </if>
+			<if test="storeInfo != null" >
+             storeInfo = #{storeInfo,jdbcType=VARCHAR},
+            </if>
+			<if test="startTime != null" >
+             startTime = #{startTime,jdbcType=TIMESTAMP},
+            </if>
+			<if test="endTine != null" >
+             endTine = #{endTine,jdbcType=TIMESTAMP},
+            </if>
+			<if test="deliveryAmount != null" >
+             deliveryAmount = #{deliveryAmount,jdbcType=VARCHAR},
+            </if>
+			<if test="phone != null" >
+             phone = #{phone,jdbcType=VARCHAR},
+            </if>
+			<if test="startLevel != null" >
+             startLevel = #{startLevel,jdbcType=INTEGER},
+            </if>
+			<if test="ranges != null" >
+             ranges = #{ranges,jdbcType=VARCHAR},
+            </if>
+			<if test="distributionArea != null" >
+             distributionArea = #{distributionArea,jdbcType=VARCHAR},
+            </if>
+		</set>
+		where id = #{id,jdbcType=BIGINT}
+	</update>
+	
+<!-- 批量更新 -->
+	<update id="updateBatchByPrimaryKey"  parameterType="java.util.List">
+	     <foreach collection="list" item="item" index="index" open="" close="" separator=";">
+                update store 
+                <set>
+                  <if test="item.adminUserId != null" >
+                    adminUserId = #{item.adminUserId,jdbcType=BIGINT},
+                  </if>
+                  <if test="item.storeName != null" >
+                    storeName = #{item.storeName,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.storeTypeId != null" >
+                    storeTypeId = #{item.storeTypeId,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.stroreCover != null" >
+                    stroreCover = #{item.stroreCover,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.storeInfo != null" >
+                    storeInfo = #{item.storeInfo,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.startTime != null" >
+                    startTime = #{item.startTime,jdbcType=TIMESTAMP},
+                  </if>
+                  <if test="item.endTine != null" >
+                    endTine = #{item.endTine,jdbcType=TIMESTAMP},
+                  </if>
+                  <if test="item.deliveryAmount != null" >
+                    deliveryAmount = #{item.deliveryAmount,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.phone != null" >
+                    phone = #{item.phone,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.startLevel != null" >
+                    startLevel = #{item.startLevel,jdbcType=INTEGER},
+                  </if>
+                  <if test="item.ranges != null" >
+                    ranges = #{item.ranges,jdbcType=VARCHAR},
+                  </if>
+                  <if test="item.distributionArea != null" >
+                    distributionArea = #{item.distributionArea,jdbcType=VARCHAR},
+                  </if>
+                </set>
+                where id = #{item.id,jdbcType=BIGINT}
+         </foreach>
+	</update>
+</mapper>
